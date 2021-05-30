@@ -12,8 +12,8 @@ import databases, sqlalchemy
 
 
 import os
-Db_URL="postgresql://tvmrhbjnytvuro:61a94c7df671bc80c67bfa75b48e76ad1c4b26634bac79a2dd0f74b51adde18f@ec2-107-22-245-82.compute-1.amazonaws.com:5432/do60c522tmtg3"
-#Db_URL="postgresql://postgres:swethA@127.0.0.1:5432/postgres"
+#Db_URL="postgresql://tvmrhbjnytvuro:61a94c7df671bc80c67bfa75b48e76ad1c4b26634bac79a2dd0f74b51adde18f@ec2-107-22-245-82.compute-1.amazonaws.com:5432/do60c522tmtg3"
+Db_URL="postgresql://postgres:swethA@127.0.0.1:5432/postgres"
 database=databases.Database(Db_URL)
 metadata=sqlalchemy.MetaData()
 
@@ -52,16 +52,17 @@ async def shutdown():
 
 
 @app.get("/api/branches/autocomplete")
-async def register_user(q:str,limit: int = 3, offsett: int = 0):
+async def register_user(q:str,limit: int = 0, offsett: int = 0):
     auto=[]
     ret=[]
     print("hello")
+    print(limit)
     res=engine.execute('SELECT bank_branch FROM bank_details where bank_branch~*\'^'+str(q)+'\'').fetchall()
     for r in res:
         auto.append(r[0])
     auto=list(set(auto))
     for v in auto:
-        query = bank_details.select().where(bank_details.c.bank_branch==v).offset(offsett).limit(limit).order_by(asc(bank_details.c.bank_ifsc))
+        query = bank_details.select().where(bank_details.c.bank_branch==v).offset(offsett).limit(limit-1).order_by(asc(bank_details.c.bank_ifsc))
         ret=ret+await database.fetch_all(query)
     return ret
 
