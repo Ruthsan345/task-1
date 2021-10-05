@@ -12,14 +12,14 @@ import databases, sqlalchemy
 from database import  database,bank_details,engine
 
 
-
+#on start initialize DB connection
 
 @app.on_event("startup")
 async def startup():
     await database.connect()
 
 
-
+#on shutdown close DB connection
 @app.on_event("shutdown")
 async def shutdown():
     await database.disconnect()
